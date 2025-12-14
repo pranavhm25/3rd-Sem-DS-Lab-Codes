@@ -9,70 +9,112 @@ stack underflow.*/
 #include <stdio.h>
 #include <stdlib.h>
 
-struct Node {
+typedef struct Node {
     int page;
     struct Node *next;
-};
+} Node;
+Node *backTop = NULL;
+Node *forwardTop = NULL;
 
-struct Node *top = NULL;
-
-void push(int page) {
-    struct Node *newNode = (struct Node *)malloc(sizeof(struct Node));
+void pushBack(int page) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
     newNode->page = page;
-    newNode->next = top;
-    top = newNode;
+    newNode->next = backTop;
+    backTop = newNode;
+}
+
+void pushForward(int page) {
+    Node *newNode = (Node *)malloc(sizeof(Node));
+    newNode->page = page;
+    newNode->next = forwardTop;
+    forwardTop = newNode;
+}
+
+int popBack() {
+    if (backTop == NULL)
+        return -1;
+    Node *temp = backTop;
+    int page = temp->page;
+    backTop = temp->next;
+    free(temp);
+    return page;
+}
+
+int popForward() {
+    if (forwardTop == NULL)
+        return -1;
+    Node *temp = forwardTop;
+    int page = temp->page;
+    forwardTop = temp->next;
+    free(temp);
+    return page;
+}
+
+void clearForward() {
+    while (forwardTop != NULL)
+        popForward();
+}
+
+void display(Node *top) {
+    if (top == NULL) {
+        printf("Empty\n");
+        return;
+    }
+    while (top != NULL) {
+        printf("%d -> ", top->page);
+        top = top->next;
+    }
+    printf("NULL\n");
+}
+
+void visitPage(int page) {
+    pushBack(page);
+    clearForward();
     printf("Visited page %d\n", page);
 }
 
-void pop() {
-    if (top == NULL) {
+void goBack() {
+    if (backTop == NULL || backTop->next == NULL) {
         printf("Stack Underflow! No previous page.\n");
         return;
     }
-    struct Node *temp = top;
-    printf("Moved back from page %d\n", temp->page);
-    top = top->next;
-    free(temp);
+    int page = popBack();
+    pushForward(page);
+    printf("Moved back from page %d\n", page);
 }
 
-void display() {
-    if (top == NULL) {
-        printf("No pages in browsing history.\n");
+void goForward() {
+    if (forwardTop == NULL) {
+        printf("Stack Underflow! No forward page.\n");
         return;
     }
-    struct Node *temp = top;
-    printf("Browsing History (Current → Oldest): ");
-    while (temp != NULL) {
-        printf("%d -> ", temp->page);
-        temp = temp->next;
-    }
-    printf("NULL\n");
+    int page = popForward();
+    pushBack(page);
+    printf("Moved forward to page %d\n", page);
 }
 
 int main() {
     int choice, page;
     while (1) {
-        printf("\nWeb Browsing System\n1. Visit New Page\n2. Back\n3. Forward (Visit Next Page)\n4. Display Browsing History\n5. Exit\nEnter your choice: ");
+        printf("\nWeb Browsing System\n1. Visit New Page\n2. Back\n3. Forward\n4. Display History\n5. Exit\nEnter choice: ");
         scanf("%d", &choice);
         switch (choice) {
             case 1:
                 printf("Enter page number: ");
                 scanf("%d", &page);
-                push(page);
-                display();
+                visitPage(page);
                 break;
             case 2:
-                pop();
-                display();
+                goBack();
                 break;
             case 3:
-                printf("Enter page number to move forward: ");
-                scanf("%d", &page);
-                push(page);
-                display();
+                goForward();
                 break;
             case 4:
-                display();
+                printf("Back Stack (Current -> Oldest): ");
+                display(backTop);
+                printf("Forward Stack: ");
+                display(forwardTop);
                 break;
             case 5:
                 printf("Exiting program.\n");
@@ -81,5 +123,4 @@ int main() {
                 printf("Invalid choice!\n");
         }
     }
-    return 0;
 }
