@@ -27,19 +27,16 @@ void add(St *s, int n) {
     for (int i = 0; i < n; i++) {
         printf("\nEnter details of student %d\n", i + 1);
         printf("Name: ");
-        fgets(s[i].name, sizeof(s[i].name), stdin);
-        s[i].name[strcspn(s[i].name, "\n")] = '\0';
+        scanf("%s", s[i].name);
         printf("USN: ");
         scanf("%s", s[i].usn);
-        getchar();
         printf("Department: ");
-        fgets(s[i].dept, sizeof(s[i].dept), stdin);
-        s[i].dept[strcspn(s[i].dept, "\n")] = '\0';
+        scanf("%s", s[i].dept);
         printf("CGPA: ");
         scanf("%f", &s[i].CGPA);
-        getchar();
     }
 }
+
 
 void display(St *s, int n) {
     printf("\n--- Student Records ---\n");
@@ -64,7 +61,6 @@ int main() {
     char search[20];
     printf("Enter number of students: ");
     scanf("%d", &n);
-    getchar();
     students = create(n);
     add(students, n);
     display(students, n);
