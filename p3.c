@@ -2,6 +2,8 @@
 expression to postfix expression. The expression consists of single character operands and
 binary operators + - * /. Apply the concept of stack data structure to solve this problem.*/
 
+//Also included '^' operator
+
 #include <stdio.h>
 #include <ctype.h>
 #define MAX 50
@@ -36,6 +38,8 @@ int precedence(char op) {
         return 1;
     if (op == '*' || op == '/')
         return 2;
+    if (op == '^')
+        return 3;
     return 0;
 }
 
@@ -58,7 +62,7 @@ void infixToPostfix(char infix[], char postfix[]) {
             pop(&s);
         }
         else {
-            while (!isEmpty(&s) && precedence(peek(&s)) >= precedence(ch)) {
+            while (!isEmpty(&s) && (precedence(peek(&s)) > precedence(ch) || (precedence(peek(&s)) == precedence(ch) && ch != '^'))) {
                 postfix[k++] = pop(&s);
             }
             push(&s, ch);
