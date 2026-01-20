@@ -1,7 +1,7 @@
-/*Write a C programto store andmanage a list of records student records (student name, usn,
-department and cgpa) using structures. Using dynamic memory allocation and
-pointers write functions to create student records, add the records, display and search
-records based on usn.*/
+/*Write a C program to store and manage a list of records student records (student name,
+usn, department and cgpa) using structures. Using dynamic memory allocation and pointers
+write functions to create student records, add the records, display and search records
+based on usn.*/
 
 #include <stdio.h>
 #include <stdlib.h>
